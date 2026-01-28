@@ -1,0 +1,42 @@
+{
+  "name": "aboleon/metaframework-google-places",
+  "description": "Google Places address autocomplete component for Laravel",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^11.0|^12.0",
+    "illuminate/database": "^11.0|^12.0",
+    "illuminate/view": "^11.0|^12.0",
+    "illuminate/contracts": "^11.0|^12.0",
+    "illuminate/translation": "^11.0|^12.0",
+    "aboleon/metaframework-inputable": "^0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "MetaFramework\\GooglePlaces\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MetaFramework\\GooglePlaces\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^9.0|^10.0",
+    "phpunit/phpunit": "^11.0",
+    "laravel/pint": "^1.27"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "MetaFramework\\GooglePlaces\\GooglePlacesServiceProvider"
+      ]
+    },
+    "branch-alias": {
+      "dev-main": "0.1.x-dev"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
