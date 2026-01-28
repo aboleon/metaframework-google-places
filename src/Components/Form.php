@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
 
-class GooglePlaces extends Component
+class Form extends Component
 {
     public const DEFAULT_FIELD = 'mfw_google_places';
 
@@ -134,7 +134,7 @@ class GooglePlaces extends Component
             ]);
         }
 
-        return view('mfw-google-places::components.google-places');
+        return view('mfw-google-places::components.form');
     }
 
     public function tagRequired(string $key): string

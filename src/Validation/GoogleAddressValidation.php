@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace MetaFramework\GooglePlaces\Validation;
 
-use MetaFramework\GooglePlaces\Components\GooglePlaces;
+use MetaFramework\GooglePlaces\Components\Form;
 
 class GoogleAddressValidation
 {
-    private string $prefix = GooglePlaces::DEFAULT_FIELD . '.';
+    private string $prefix = Form::DEFAULT_FIELD . '.';
 
     /**
      * @var array<int, string>

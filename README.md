@@ -49,7 +49,7 @@ Resolver usage:
 ## Usage
 
 ```blade
-<x-google-places
+<x-mfw-google-places::form
     :model="$address"
     field="address"
     label="Address"
@@ -57,6 +57,12 @@ Resolver usage:
     :hidden="['administrative_area_level_2']"
     :showCoords="true"
 />
+```
+
+To fully customize, publish the component and use the native Blade tag:
+
+```blade
+<x-google-places />
 ```
 
 ## Artisan Commands
@@ -70,7 +76,7 @@ php artisan mfw-google-places:publish-request [--force]
 
 - `mfw-google-places:make-geo-model` generates a new Geo model and migration with all Google Places fields.
 - `mfw-google-places:make-geo-for-model` adds a Google Places Geo relation and migration to an existing model (optionally provide the model class).
-- `mfw-google-places:publish-component` publishes the component view to `resources/views/vendor/mfw-google-places/components/google-places.blade.php` for customization (use `--force` to overwrite).
+- `mfw-google-places:publish-component` publishes `app/View/Components/GooglePlaces.php` and `resources/views/components/google-places.blade.php` for customization (use `--force` to overwrite).
 - `mfw-google-places:publish-request` publishes a `GooglePlacesRequest` to `app/Http/Requests` for customization (use `--force` to overwrite).
 
 Validation example:

@@ -6,7 +6,6 @@ namespace MetaFramework\GooglePlaces;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use MetaFramework\GooglePlaces\Components\GooglePlaces;
 use MetaFramework\GooglePlaces\Console\MakeGeoForModelCommand;
 use MetaFramework\GooglePlaces\Console\MakeGooglePlacesModelCommand;
 use MetaFramework\GooglePlaces\Console\PublishGooglePlacesComponentCommand;
@@ -26,7 +25,6 @@ class GooglePlacesServiceProvider extends ServiceProvider
         }
 
         Blade::componentNamespace('MetaFramework\GooglePlaces\Components', 'mfw-google-places');
-        Blade::component('google-places', GooglePlaces::class);
 
         $this->publishes([
             __DIR__ . '/../publishable/config/mfw-google-places.php' => config_path('mfw-google-places.php'),

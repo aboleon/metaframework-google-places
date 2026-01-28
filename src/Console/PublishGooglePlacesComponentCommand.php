@@ -15,27 +15,49 @@ class PublishGooglePlacesComponentCommand extends Command
 
     public function handle(): int
     {
-        $source = __DIR__ . '/../resources/views/components/google-places.blade.php';
-        $destination = resource_path('views/vendor/mfw-google-places/components/google-places.blade.php');
+        $sourceComponent = __DIR__ . '/../Components/Form.php';
+        $sourceView = __DIR__ . '/../resources/views/components/form.blade.php';
+        $destinationComponent = app_path('View/Components/GooglePlaces.php');
+        $destinationView = resource_path('views/components/google-places.blade.php');
 
-        if (!is_file($source)) {
-            $this->error('Source component view not found.');
-            $this->line('Expected: ' . $source);
+        if (!is_file($sourceComponent) || !is_file($sourceView)) {
+            $this->error('Source component files not found.');
+            $this->line('Expected: ' . $sourceComponent);
+            $this->line('Expected: ' . $sourceView);
 
             return self::FAILURE;
         }
 
-        if (is_file($destination) && !$this->option('force')) {
-            $this->warn('Component view already published. Use --force to overwrite.');
+        if ((is_file($destinationComponent) || is_file($destinationView)) && !$this->option('force')) {
+            $this->warn('Component already published. Use --force to overwrite.');
 
             return self::SUCCESS;
         }
 
         $filesystem = new Filesystem;
-        $filesystem->ensureDirectoryExists(dirname($destination));
-        $filesystem->copy($source, $destination);
+        $filesystem->ensureDirectoryExists(dirname($destinationComponent));
+        $filesystem->ensureDirectoryExists(dirname($destinationView));
 
-        $this->info('Published: ' . $destination);
+        $componentContents = $filesystem->get($sourceComponent);
+        $componentContents = str_replace(
+            [
+                'namespace MetaFramework\\GooglePlaces\\Components;',
+                'class Form extends Component',
+                "return view('mfw-google-places::components.form');",
+            ],
+            [
+                'namespace App\\View\\Components;',
+                'class GooglePlaces extends Component',
+                "return view('components.google-places');",
+            ],
+            $componentContents
+        );
+
+        $filesystem->put($destinationComponent, $componentContents);
+        $filesystem->copy($sourceView, $destinationView);
+
+        $this->info('Published: ' . $destinationComponent);
+        $this->info('Published: ' . $destinationView);
         $this->line('You can now customize it while still using <x-google-places>.');
 
         return self::SUCCESS;
