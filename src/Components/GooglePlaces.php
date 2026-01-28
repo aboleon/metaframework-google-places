@@ -36,8 +36,6 @@ class GooglePlaces extends Component
         'place_id',
     ];
 
-    public ?object $geo = null;
-
     public ?string $defaultTextAddress = null;
 
     public ?string $error = null;
@@ -45,8 +43,7 @@ class GooglePlaces extends Component
     public Collection $required;
 
     public function __construct(
-        ?object $model = null,
-        ?object $geo = null,
+        public ?object $model = null,
         public string $field = self::DEFAULT_FIELD,
         public string $random_id = '',
         public array $params = [],
@@ -65,24 +62,22 @@ class GooglePlaces extends Component
         public bool $showCoords = false,
     ) {
         $this->required = collect($this->params['required'] ?? []);
-        $resolvedModel = $model ?? $geo;
 
-        if (!$resolvedModel) {
+        if (!$this->model) {
             $this->error = __('mfw-google-places.missing_model');
 
             return;
         }
 
-        $missingFields = $this->validateModelFields($resolvedModel);
+        $missingFields = $this->validateModelFields($this->model);
         if ($missingFields) {
             $this->error = __('mfw-google-places.missing_fields', ['fields' => implode(', ', $missingFields)]);
 
             return;
         }
 
-        $this->geo = $resolvedModel;
         $this->random_id = Str::random(4);
-        $this->defaultTextAddress = $this->geo->text_address ?? $this->geo->locality;
+        $this->defaultTextAddress = $this->model->text_address ?? $this->model->locality;
 
         if (!$this->showCoords) {
             $this->hidden = array_merge($this->hidden, self::COORDINATE_FIELDS);

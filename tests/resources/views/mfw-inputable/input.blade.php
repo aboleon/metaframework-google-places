@@ -1,0 +1,1 @@
+{{-- Stub component for tests --}}

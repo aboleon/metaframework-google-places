@@ -5,15 +5,15 @@
     $countryName = '';
     if ($error) {
         $countryName = old($field . '.country');
-    } elseif (!empty($geo->country)) {
-        $countryName = $geo->country;
+    } elseif (!empty($model->country)) {
+        $countryName = $model->country;
     } elseif (
-        !empty($geo->country_code) &&
+        !empty($model->country_code) &&
         $resolver &&
         class_exists($resolver) &&
         method_exists($resolver, 'getCountryNameByCode')
     ) {
-        $countryName = $resolver::getCountryNameByCode($geo->country_code);
+        $countryName = $resolver::getCountryNameByCode($model->country_code);
     }
 @endphp
 <div class="clearfix gmapsbar {{ $field }}" id="mapsbar_{{ $random_id }}">
@@ -40,48 +40,48 @@
             <x-mfw-inputable::input
                 class="field street_number{{ $tagRequired('street_number') . $readonlies('street_number') }}"
                 :label="__('mfw-google-places.street_number')" name="{{ $field }}[street_number]"
-                value="{{ old($field . '.street_number', $geo->street_number) }}" :params="['placeholder' => __('mfw-google-places.street_number')]" :required="$tagRequired('street_number')"
+                value="{{ old($field . '.street_number', $model->street_number) }}" :params="['placeholder' => __('mfw-google-places.street_number')]" :required="$tagRequired('street_number')"
                 :readonly="$readonlies('street_number')" />
 
         </div>
         <div class="col-sm-8 {{ $inputable('route') }} mb-3">
             <x-mfw-inputable::input class="field route{{ $tagRequired('route') . $readonlies('route') }}"
-                :label="__('mfw-google-places.route') . $labelRequired('route')" name="{{ $field }}[route]" value="{{ old($field . '.route', $geo->route) }}"
+                :label="__('mfw-google-places.route') . $labelRequired('route')" name="{{ $field }}[route]" value="{{ old($field . '.route', $model->route) }}"
                 :params="['placeholder' => __('mfw-google-places.route')]" :readonly="$readonlies('route')" />
         </div>
         <div class="col-sm-4 {{ $inputable('postal_code') }} mb-3">
             <x-mfw-inputable::input
                 class="field postal_code{{ $tagRequired('postal_code') . $readonlies('postal_code') }}"
                 :label="__('mfw-google-places.postal_code') . $labelRequired('postal_code')" name="{{ $field }}[postal_code]"
-                value="{{ old($field . '.postal_code', $geo->postal_code) }}" :params="['placeholder' => __('mfw-google-places.postal_code')]" :readonly="$readonlies('postal_code')" />
+                value="{{ old($field . '.postal_code', $model->postal_code) }}" :params="['placeholder' => __('mfw-google-places.postal_code')]" :readonly="$readonlies('postal_code')" />
         </div>
         <div class="col-sm-8 {{ $inputable('locality') }} mb-3">
             <x-mfw-inputable::input class="field locality{{ $tagRequired('locality') . $readonlies('locality') }}"
                 :label="__('mfw-google-places.locality') . $labelRequired('locality')" name="{{ $field }}[locality]"
-                value="{{ old($field . '.locality', $geo->locality) }}" :params="['placeholder' => __('mfw-google-places.locality')]" :readonly="$readonlies('locality')" />
+                value="{{ old($field . '.locality', $model->locality) }}" :params="['placeholder' => __('mfw-google-places.locality')]" :readonly="$readonlies('locality')" />
         </div>
         <div class="col-sm-4 {{ $inputable('administrative_area_level_2') }} mb-3">
             <x-mfw-inputable::input
                 class="field administrative_area_level_2 {{ $tagRequired('administrative_area_level_2') }}"
                 :label="__('mfw-google-places.district') . $labelRequired('administrative_area_level_2')" name="{{ $field }}[administrative_area_level_2]"
-                value="{{ old($field . '.administrative_area_level_2', $geo->administrative_area_level_2) }}" />
+                value="{{ old($field . '.administrative_area_level_2', $model->administrative_area_level_2) }}" />
         </div>
         <div class="col-sm-8 {{ $inputable('administrative_area_level_1') }} mb-3">
             <x-mfw-inputable::input
                 class="field administrative_area_level_1 {{ $tagRequired('administrative_area_level_1') }}"
                 :label="__('mfw-google-places.region') . $labelRequired('administrative_area_level_1')" name="{{ $field }}[administrative_area_level_1]"
-                value="{{ old($field . '.administrative_area_level_1', $geo->administrative_area_level_1) }}" />
+                value="{{ old($field . '.administrative_area_level_1', $model->administrative_area_level_1) }}" />
         </div>
         <div class="col-sm-8 {{ $inputable('administrative_area_level_1_short') }} mb-3">
             <x-mfw-inputable::input
                 class="field administrative_area_level_1_short {{ $tagRequired('administrative_area_level_1_short') }}"
                 :label="__('mfw-google-places.region') . $labelRequired('administrative_area_level_1_short')" name="{{ $field }}[administrative_area_level_1_short]"
-                value="{{ old($field . '.administrative_area_level_1_short', $geo->administrative_area_level_1_short) }}" />
+                value="{{ old($field . '.administrative_area_level_1_short', $model->administrative_area_level_1_short) }}" />
         </div>
         <div class="col-sm-2 {{ $inputable('country_code') }} mb-3">
             <x-mfw-inputable::input class="field country_code {{ $tagRequired('country_code') }}" :label="__('mfw-google-places.country_code') . $labelRequired('country_code')"
                 name="{{ $field }}[country_code]"
-                value="{{ old($field . '.country_code', $geo->country_code) }}" />
+                value="{{ old($field . '.country_code', $model->country_code) }}" />
         </div>
         <div class="col-sm-5 {{ $inputable('country') }} mb-3">
             <x-mfw-inputable::input class="field country {{ $tagRequired('country') }}" :label="__('mfw-google-places.country') . $labelRequired('country')"
@@ -90,11 +90,11 @@
         <div class="w-100"></div>
         <div class="col-md-6 {{ $inputable('lat') }} mb-3">
             <x-mfw-inputable::input class="field lat mfw_google_places_lat" :label="__('mfw-google-places.latitude')"
-                name="{{ $field }}[lat]" value="{{ old($field . '.lat', $geo->lat + 0) }}" />
+                name="{{ $field }}[lat]" value="{{ old($field . '.lat', $model->lat + 0) }}" />
         </div>
         <div class="col-md-6 {{ $inputable('lon') }} mb-3">
             <x-mfw-inputable::input class="field lon mfw_google_places_lon" :label="__('mfw-google-places.longitude')"
-                name="{{ $field }}[lon]" value="{{ old($field . '.lon', $geo->lon + 0) }}" />
+                name="{{ $field }}[lon]" value="{{ old($field . '.lon', $model->lon + 0) }}" />
         </div>
     </div>
     @if ($fix)
@@ -104,7 +104,7 @@
         </div>
     @endif
     <input type="hidden" class="place_id" name="{{ $field }}[place_id]"
-        value="{{ $error ? old($field . '.place_id') : $geo->place_id ?? '' }}" />
+        value="{{ $error ? old($field . '.place_id') : $model->place_id ?? '' }}" />
     <input type="hidden" class="address_type" name="{{ $field }}[address_type]" />
     <input type="hidden" class="continent" name="{{ $field }}[continent]" />
 </div>
