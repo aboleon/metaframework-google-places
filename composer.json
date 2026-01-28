@@ -11,7 +11,7 @@
     "illuminate/contracts": "^11.0|^12.0",
     "illuminate/translation": "^11.0|^12.0",
     "aboleon/metaframework-inputable": "^1.0",
-    "aboleon/metaframework-support": "0.*"
+    "aboleon/metaframework-support": "^1.*"
   },
   "autoload": {
     "psr-4": {
