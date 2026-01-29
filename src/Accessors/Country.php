@@ -11,6 +11,11 @@ class Country
     /** @var array<string, array<string, string>> */
     private static array $countriesCache = [];
 
+    public static function resetCache(): void
+    {
+        self::$countriesCache = [];
+    }
+
     /**
      * @return array<mixed>
      */

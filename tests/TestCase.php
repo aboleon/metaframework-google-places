@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MetaFramework\GooglePlaces\Tests;
 
+use MetaFramework\GooglePlaces\Accessors\Country;
 use MetaFramework\GooglePlaces\GooglePlacesServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
@@ -34,6 +35,7 @@ abstract class TestCase extends OrchestraTestCase
         parent::setUp();
 
         $this->app['cache']->flush();
+        Country::resetCache();
     }
 
     protected function getPackageProviders($app): array
