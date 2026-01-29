@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Cache;
 
 class Country
 {
+    /** @var array<string, array<string, string>> */
+    private static array $countriesCache = [];
+
     /**
      * @return array<mixed>
      */
@@ -51,7 +54,11 @@ class Country
     {
         $locale = self::resolveLocale($locale ?: app()->getLocale());
 
-        return Cache::rememberForever('countries_' . $locale, function () use ($locale): array {
+        if (isset(self::$countriesCache[$locale])) {
+            return self::$countriesCache[$locale];
+        }
+
+        return self::$countriesCache[$locale] = Cache::rememberForever('countries_' . $locale, function () use ($locale): array {
             $path = __DIR__ . '/../../publishable/countries/' . $locale . '/countries.json';
             if (!is_file($path)) {
                 return [];
