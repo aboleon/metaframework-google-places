@@ -40,8 +40,23 @@ function setupGooglePlacesBar(element, PlaceAutocompleteElement) {
             try {
                 const parsedOptions = JSON.parse(optionsText);
                 // Map legacy options to new API format
+                if (parsedOptions.includedPrimaryTypes) {
+                    apiOptions.includedPrimaryTypes = Array.isArray(parsedOptions.includedPrimaryTypes)
+                        ? parsedOptions.includedPrimaryTypes
+                        : [parsedOptions.includedPrimaryTypes];
+                }
+                if (parsedOptions.includedSecondaryTypes) {
+                    apiOptions.includedSecondaryTypes = Array.isArray(parsedOptions.includedSecondaryTypes)
+                        ? parsedOptions.includedSecondaryTypes
+                        : [parsedOptions.includedSecondaryTypes];
+                }
+                if (parsedOptions.includedRegionCodes) {
+                    apiOptions.includedRegionCodes = Array.isArray(parsedOptions.includedRegionCodes)
+                        ? parsedOptions.includedRegionCodes
+                        : [parsedOptions.includedRegionCodes];
+                }
                 if (parsedOptions.types) {
-                    apiOptions.types = parsedOptions.types;
+                    apiOptions.types = Array.isArray(parsedOptions.types) ? parsedOptions.types : [parsedOptions.types];
                 }
                 if (parsedOptions.componentRestrictions && parsedOptions.componentRestrictions.country) {
                     // New API uses includedRegionCodes instead of componentRestrictions
@@ -66,7 +81,8 @@ function setupGooglePlacesBar(element, PlaceAutocompleteElement) {
 
     if (apiOptions.types) {
         const mappedTypes = apiOptions.types.map(t => typeMapping[t] || t);
-        apiOptions.includedPrimaryTypes = mappedTypes;
+        const mergedPrimary = (apiOptions.includedPrimaryTypes || []).concat(mappedTypes);
+        apiOptions.includedPrimaryTypes = [...new Set(mergedPrimary)];
         delete apiOptions.types;
     }
 

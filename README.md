@@ -59,6 +59,26 @@ Resolver usage:
 />
 ```
 
+### Custom search filters (Places API)
+
+You can pass Places Autocomplete options through `params`. The component supports:
+- `types` (legacy; mapped to `includedPrimaryTypes`)
+- `includedPrimaryTypes`
+- `includedSecondaryTypes`
+- `includedRegionCodes` (or legacy `componentRestrictions.country`)
+
+Example: keep address results and also allow hotels/lodging:
+
+```blade
+<x-mfw-google-places::form
+    :model="$address"
+    :params="[
+        'types' => ['geocode'],
+        'includedPrimaryTypes' => ['lodging'],
+    ]"
+/>
+```
+
 To fully customize, publish the component and use the native Blade tag:
 
 ```blade
