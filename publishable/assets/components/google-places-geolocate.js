@@ -256,8 +256,8 @@ function setupGooglePlacesBar(element, PlaceAutocompleteElement) {
 
             // Set lat/lng
             if (place.location) {
-                const latField = element.querySelector('.mfw_geo_lat');
-                const lonField = element.querySelector('.mfw_geo_lon');
+                const latField = element.querySelector('.mfw_google_places_lat');
+                const lonField = element.querySelector('.mfw_google_places_lon');
 
                 if (latField) {
                     latField.value = place.location.lat();
