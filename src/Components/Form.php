@@ -107,6 +107,13 @@ class Form extends Component
             return true;
         }
 
+        if (method_exists($model, 'getFillable')) {
+            $fillable = $model->getFillable();
+            if (is_array($fillable) && in_array($field, $fillable, true)) {
+                return true;
+            }
+        }
+
         if (method_exists($model, 'getAttributes')) {
             $attributes = $model->getAttributes();
             if (is_array($attributes) && array_key_exists($field, $attributes)) {
