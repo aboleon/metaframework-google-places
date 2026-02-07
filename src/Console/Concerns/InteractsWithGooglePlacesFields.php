@@ -22,14 +22,14 @@ trait InteractsWithGooglePlacesFields
     ];
 
     private const GOOGLE_PLACES_MIGRATION_FIELDS = [
-        "\$table->string('text_address')->nullable();",
+        "\$table->text('text_address')->nullable();",
         "\$table->string('street_number')->nullable();",
-        "\$table->string('route')->nullable();",
+        "\$table->longtext('route')->nullable();",
         "\$table->string('postal_code')->nullable();",
-        "\$table->string('locality')->nullable();",
-        "\$table->string('administrative_area_level_1')->nullable();",
-        "\$table->string('administrative_area_level_1_short')->nullable();",
-        "\$table->string('administrative_area_level_2')->nullable();",
+        "\$table->longtext('locality')->nullable();",
+        "\$table->longtext('administrative_area_level_1')->nullable();",
+        "\$table->longtext('administrative_area_level_1_short')->nullable();",
+        "\$table->longtext('administrative_area_level_2')->nullable();",
         "\$table->string('country_code', 10)->nullable();",
         "\$table->decimal('lat', 10, 7)->nullable();",
         "\$table->decimal('lon', 10, 7)->nullable();",
