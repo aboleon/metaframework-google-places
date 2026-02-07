@@ -1,24 +1,5 @@
-{{-- Pour activer la recherche Google Maps Places - class=gmpasbar --}}
-@php
-    $error = $errors->any();
-    $resolver = config('mfw-google-places.countries_resolver');
-    $countryName = '';
-    if ($error) {
-        $countryName = old($field . '.country');
-    } elseif (!empty($model->country)) {
-        $countryName = $model->country;
-    } elseif (
-        !empty($model->country_code) &&
-        $resolver &&
-        class_exists($resolver) &&
-        method_exists($resolver, 'getCountryNameByCode')
-    ) {
-        $countryName = $resolver::getCountryNameByCode($model->country_code);
-    }
-@endphp
 <div class="clearfix gmapsbar {{ $field }}" id="mapsbar_{{ $random_id }}">
     <div class="locationField" data-error="">
-
         @if ($label)
             <label for="geo_text_address_{{ $random_id }}"
                 class="form-label">{{ $label . $labelRequired('text_address') }}</label>
@@ -85,7 +66,7 @@
         </div>
         <div class="col-sm-5 {{ $inputable('country') }} mb-3">
             <x-mfw-inputable::input class="field country {{ $tagRequired('country') }}" :label="__('mfw-google-places.country') . $labelRequired('country')"
-                name="{{ $field }}[country]" value="{{ $countryName }}" :readonly="$readonlies('country')" />
+                name="{{ $field }}[country]" value="{{ \MetaFramework\GooglePlaces\Accessors\Country::getCountryNameByCode($model->country_code) }}" :readonly="$readonlies('country')" />
         </div>
         <div class="w-100"></div>
         <div class="col-md-6 {{ $inputable('lat') }} mb-3">
@@ -104,7 +85,7 @@
         </div>
     @endif
     <input type="hidden" class="place_id" name="{{ $field }}[place_id]"
-        value="{{ $error ? old($field . '.place_id') : $model->place_id ?? '' }}" />
+        value="{{ old($field . '.place_id', $model->place_id) }}" />
     <input type="hidden" class="address_type" name="{{ $field }}[address_type]" />
     <input type="hidden" class="continent" name="{{ $field }}[continent]" />
 </div>

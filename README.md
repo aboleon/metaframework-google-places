@@ -38,13 +38,8 @@ return [
     'google' => [
         'places_api_key' => env('MFW_GOOGLE_PLACES_KEY', ''),
     ],
-    'countries_resolver' => null,
 ];
 ```
-
-Resolver usage:
-- Set `countries_resolver` to a class that implements `getCountryNameByCode($code)` (and optional locale-aware `getCountryNameByCodeAndLocale`).
-- Example: `MetaFramework\GooglePlaces\Accessors\Country::class` to resolve country names from ISO-2 codes and locale files.
 
 ## Usage
 
