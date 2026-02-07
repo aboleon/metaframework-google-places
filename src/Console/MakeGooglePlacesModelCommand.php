@@ -6,9 +6,12 @@ namespace MetaFramework\GooglePlaces\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use MetaFramework\GooglePlaces\Console\Concerns\InteractsWithGooglePlacesFields;
 
 class MakeGooglePlacesModelCommand extends Command
 {
+    use InteractsWithGooglePlacesFields;
+
     protected $signature = 'mfw-google-places:make-geo-model';
 
     protected $description = 'Create a model with Google Places fields and its migration';
@@ -43,6 +46,7 @@ class MakeGooglePlacesModelCommand extends Command
         $this->info("Creating model: {$modelClass}");
 
         $this->call('make:model', ['name' => $modelPath]);
+        $this->updateModelFillable($modelPath);
 
         // Create migration
         $migrationName = 'create_' . $tableName . '_table';
@@ -63,8 +67,8 @@ class MakeGooglePlacesModelCommand extends Command
 
     private function buildMigration(string $tableName, string $parentModel): string
     {
-        $foreignKey = '';
         $foreignKeyField = '';
+        $googlePlacesFields = $this->buildGooglePlacesMigrationFieldsString();
 
         if ($parentModel) {
             $parentModel = str_replace('/', '\\', $parentModel);
@@ -90,19 +94,7 @@ return new class extends Migration
         Schema::create('{$tableName}', function (Blueprint \$table) {
             \$table->id();
             {$foreignKeyField}
-            \$table->string('text_address')->nullable();
-            \$table->string('street_number')->nullable();
-            \$table->string('route')->nullable();
-            \$table->string('postal_code')->nullable();
-            \$table->string('locality')->nullable();
-            \$table->string('administrative_area_level_1')->nullable();
-            \$table->string('administrative_area_level_1_short')->nullable();
-            \$table->string('administrative_area_level_2')->nullable();
-            \$table->string('country')->nullable();
-            \$table->string('country_code', 10)->nullable();
-            \$table->decimal('lat', 10, 7)->nullable();
-            \$table->decimal('lon', 10, 7)->nullable();
-            \$table->string('place_id')->nullable();
+{$googlePlacesFields}
             \$table->timestamps();
         });
     }
@@ -114,5 +106,51 @@ return new class extends Migration
 };
 
 PHP;
+    }
+
+    private function updateModelFillable(string $modelPath): void
+    {
+        $modelFilePath = app_path('Models/' . $modelPath . '.php');
+
+        if (!file_exists($modelFilePath)) {
+            $this->warn("Could not find generated model file: {$modelFilePath}");
+
+            return;
+        }
+
+        $content = file_get_contents($modelFilePath);
+
+        if (!is_string($content) || str_contains($content, '$fillable')) {
+            return;
+        }
+
+        $fillables = $this->buildGooglePlacesFillableString();
+
+        $fillableBlock = <<<PHP
+
+    protected \$fillable = [
+{$fillables}
+    ];
+
+PHP;
+
+        $updated = preg_replace(
+            '/(class\s+\w+\s+extends\s+Model\s*\{\R(?:\s*use [^;]+;\R)?)/',
+            '$1' . $fillableBlock,
+            $content,
+            1,
+            $count
+        );
+
+        if ($count === 0 || !is_string($updated)) {
+            $lastBracePos = strrpos($content, '}');
+            if ($lastBracePos === false) {
+                return;
+            }
+
+            $updated = substr($content, 0, $lastBracePos) . $fillableBlock . substr($content, $lastBracePos);
+        }
+
+        file_put_contents($modelFilePath, $updated);
     }
 }

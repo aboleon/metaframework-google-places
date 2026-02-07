@@ -6,9 +6,12 @@ namespace MetaFramework\GooglePlaces\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use MetaFramework\GooglePlaces\Console\Concerns\InteractsWithGooglePlacesFields;
 
 class MakeGeoForModelCommand extends Command
 {
+    use InteractsWithGooglePlacesFields;
+
     protected $signature = 'mfw-google-places:make-geo-for-model {model? : The parent model path}';
 
     protected $description = 'Create a Google Places address model linked to an existing model';
@@ -99,6 +102,7 @@ class MakeGeoForModelCommand extends Command
         $namespace = str_replace('/', '\\', $path);
         $filePath = base_path($path . '/' . $modelName . '.php');
         $relationMethod = Str::camel($parentModelName);
+        $fillableFields = $this->buildGooglePlacesFillableString();
 
         $content = <<<PHP
 <?php
@@ -110,6 +114,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class {$modelName} extends Model
 {
+    protected \$fillable = [
+{$fillableFields}
+    ];
+
     public function {$relationMethod}(): BelongsTo
     {
         return \$this->belongsTo({$parentModelName}::class);
@@ -128,6 +136,7 @@ PHP;
         $directory = app_path('Models' . ($subPath ? '/' . $subPath : ''));
         $filePath = $directory . '/' . $modelName . '.php';
         $relationMethod = Str::camel($parentModelName);
+        $fillableFields = $this->buildGooglePlacesFillableString();
 
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
@@ -143,6 +152,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class {$modelName} extends Model
 {
+    protected \$fillable = [
+{$fillableFields}
+    ];
+
     public function {$relationMethod}(): BelongsTo
     {
         return \$this->belongsTo({$parentModelName}::class);
@@ -207,6 +220,8 @@ PHP;
 
     private function buildMigration(string $tableName, string $parentTable, string $foreignKey): string
     {
+        $googlePlacesFields = $this->buildGooglePlacesMigrationFieldsString();
+
         return <<<PHP
 <?php
 
@@ -221,19 +236,7 @@ return new class extends Migration
         Schema::create('{$tableName}', function (Blueprint \$table) {
             \$table->id();
             \$table->foreignId('{$foreignKey}')->constrained('{$parentTable}')->cascadeOnDelete();
-            \$table->string('text_address')->nullable();
-            \$table->string('street_number')->nullable();
-            \$table->string('route')->nullable();
-            \$table->string('postal_code')->nullable();
-            \$table->string('locality')->nullable();
-            \$table->string('administrative_area_level_1')->nullable();
-            \$table->string('administrative_area_level_1_short')->nullable();
-            \$table->string('administrative_area_level_2')->nullable();
-            \$table->string('country')->nullable();
-            \$table->string('country_code', 10)->nullable();
-            \$table->decimal('lat', 10, 7)->nullable();
-            \$table->decimal('lon', 10, 7)->nullable();
-            \$table->string('place_id')->nullable();
+{$googlePlacesFields}
             \$table->timestamps();
         });
     }
