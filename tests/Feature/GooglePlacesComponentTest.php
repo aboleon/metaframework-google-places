@@ -81,4 +81,38 @@ class GooglePlacesComponentTest extends TestCase
         $this->assertStringContainsString('name="mfw_google_places[place_id]"', $html);
         $this->assertStringNotContainsString(__('mfw-google-places.missing_model'), $html);
     }
+
+    public function test_component_searchbar_mode_hides_extra_fields(): void
+    {
+        Blade::componentNamespace(
+            'MetaFramework\\GooglePlaces\\Tests\\Stubs\\Components',
+            'mfw-inputable'
+        );
+        View::share('errors', new ViewErrorBag);
+
+        $model = (object) [
+            'text_address' => '123 Main St',
+            'street_number' => '123',
+            'route' => 'Main St',
+            'postal_code' => '12345',
+            'locality' => 'Springfield',
+            'administrative_area_level_1' => 'State',
+            'administrative_area_level_1_short' => 'ST',
+            'administrative_area_level_2' => 'County',
+            'country' => 'United States',
+            'country_code' => 'US',
+            'lat' => 1.23,
+            'lon' => 4.56,
+            'place_id' => 'place-123',
+        ];
+
+        $html = Blade::render('<x-mfw-google-places::form :model="$model" mode="searchbar" :fix="true" />', [
+            'model' => $model,
+        ]);
+
+        $this->assertStringContainsString('name="mfw_google_places[text_address]"', $html);
+        $this->assertStringContainsString('mfw_google_places_fields my-3 d-none', $html);
+        $this->assertStringContainsString('col-route d-none', $html);
+        $this->assertStringNotContainsString('mfw_google_places[manual_fix]', $html);
+    }
 }

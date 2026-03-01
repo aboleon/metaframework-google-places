@@ -14,6 +14,10 @@ class Form extends Component
 {
     public const DEFAULT_FIELD = 'mfw_google_places';
 
+    public const MODE_DEFAULT = 'default';
+
+    public const MODE_SEARCHBAR = 'searchbar';
+
     /**
      * Additional parameters for the Google Places JS URL.
      *
@@ -22,6 +26,20 @@ class Form extends Component
     private const READONLY_FIELDS = ['street_number', 'route', 'locality', 'postal_code', 'country'];
 
     private const COORDINATE_FIELDS = ['lat', 'lon'];
+
+    private const SEARCHBAR_HIDDEN_FIELDS = [
+        'street_number',
+        'route',
+        'postal_code',
+        'locality',
+        'administrative_area_level_1',
+        'administrative_area_level_1_short',
+        'administrative_area_level_2',
+        'country_code',
+        'country',
+        'lat',
+        'lon',
+    ];
 
     private const MODEL_FIELDS = [
         'text_address',
@@ -63,8 +81,10 @@ class Form extends Component
             'country_code',
         ],
         public bool $showCoords = false,
+        public string $mode = self::MODE_DEFAULT,
     ) {
         $this->model = $this->resolveModel($model);
+        $this->mode = $this->normalizeMode($this->mode);
         $this->required = collect($this->params['required'] ?? []);
 
         if (!$this->model) {
@@ -86,6 +106,17 @@ class Form extends Component
         if (!$this->showCoords) {
             $this->hidden = array_merge($this->hidden, self::COORDINATE_FIELDS);
         }
+
+        if ($this->isSearchbarMode()) {
+            $this->hidden = array_values(array_unique(array_merge($this->hidden, self::SEARCHBAR_HIDDEN_FIELDS)));
+        }
+    }
+
+    private function normalizeMode(string $mode): string
+    {
+        return in_array($mode, [self::MODE_DEFAULT, self::MODE_SEARCHBAR], true)
+            ? $mode
+            : self::MODE_DEFAULT;
     }
 
     private function resolveModel(object|string|null $model): ?object
@@ -168,6 +199,11 @@ class Form extends Component
     public function tagRequired(string $key): string
     {
         return $this->required->contains($key) ? $this->tag_required : '';
+    }
+
+    public function isSearchbarMode(): bool
+    {
+        return $this->mode === self::MODE_SEARCHBAR;
     }
 
     public function labelRequired(string $key): string

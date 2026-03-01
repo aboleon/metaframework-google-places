@@ -16,7 +16,7 @@
         <x-mfw-inputable::validation-error field="{{ $field }}[text_address]" />
     </div>
 
-    <div class="row {{ $field }}_fields my-3">
+    <div class="row {{ $field }}_fields my-3{{ $isSearchbarMode() ? ' d-none' : '' }}">
         <div class="col-sm-4 {{ $inputable('street_number') }} mb-3">
             <x-mfw-inputable::input
                 class="field street_number{{ $tagRequired('street_number') . $readonlies('street_number') }}"
@@ -78,7 +78,7 @@
                 name="{{ $field }}[lon]" value="{{ old($field . '.lon', $model->lon + 0) }}" />
         </div>
     </div>
-    @if ($fix)
+    @if ($fix && !$isSearchbarMode())
         <div class="{{ $field }}_manual_fix mt-3">
             <x-mfw-inputable::checkbox class="mfw-google-places-manual-fix" name="{{ $field }}[manual_fix]"
                 :label="__('mfw-google-places.manually_fix_address')" />

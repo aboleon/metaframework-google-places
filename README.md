@@ -54,6 +54,15 @@ return [
 />
 ```
 
+Searchbar-only mode:
+
+```blade
+<x-mfw-google-places::form
+    :model="$address"
+    mode="searchbar"
+/>
+```
+
 ### Custom search filters (Places API)
 
 You can pass Places Autocomplete options through `params`. The component supports:
