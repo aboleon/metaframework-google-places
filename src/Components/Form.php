@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
+use Throwable;
 
 class Form extends Component
 {
@@ -40,10 +41,12 @@ class Form extends Component
 
     public ?string $error = null;
 
+    public ?object $model = null;
+
     public Collection $required;
 
     public function __construct(
-        public ?object $model = null,
+        object|string|null $model = null,
         public string $field = self::DEFAULT_FIELD,
         public string $random_id = '',
         public array $params = [],
@@ -61,6 +64,7 @@ class Form extends Component
         ],
         public bool $showCoords = false,
     ) {
+        $this->model = $this->resolveModel($model);
         $this->required = collect($this->params['required'] ?? []);
 
         if (!$this->model) {
@@ -81,6 +85,23 @@ class Form extends Component
 
         if (!$this->showCoords) {
             $this->hidden = array_merge($this->hidden, self::COORDINATE_FIELDS);
+        }
+    }
+
+    private function resolveModel(object|string|null $model): ?object
+    {
+        if (is_object($model)) {
+            return $model;
+        }
+
+        if (!is_string($model) || $model === '' || !class_exists($model)) {
+            return null;
+        }
+
+        try {
+            return new $model;
+        } catch (Throwable) {
+            return null;
         }
     }
 

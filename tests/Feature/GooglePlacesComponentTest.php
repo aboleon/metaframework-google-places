@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ViewErrorBag;
 use MetaFramework\GooglePlaces\Components\Form;
+use MetaFramework\GooglePlaces\Tests\Stubs\Models\BookingRequestAddress;
 use MetaFramework\GooglePlaces\Tests\TestCase;
 
 class GooglePlacesComponentTest extends TestCase
@@ -57,5 +58,27 @@ class GooglePlacesComponentTest extends TestCase
         $component = new Form;
 
         $this->assertSame(__('mfw-google-places.missing_model'), $component->error);
+    }
+
+    public function test_component_resolves_model_class_string(): void
+    {
+        Blade::componentNamespace(
+            'MetaFramework\\GooglePlaces\\Tests\\Stubs\\Components',
+            'mfw-inputable'
+        );
+        View::share('errors', new ViewErrorBag);
+
+        $publishedView = resource_path('views/components/google-places.blade.php');
+        if (File::exists($publishedView)) {
+            File::delete($publishedView);
+        }
+
+        $html = Blade::render('<x-mfw-google-places::form :model="$modelClass" />', [
+            'modelClass' => BookingRequestAddress::class,
+        ]);
+
+        $this->assertStringContainsString('name="mfw_google_places[text_address]"', $html);
+        $this->assertStringContainsString('name="mfw_google_places[place_id]"', $html);
+        $this->assertStringNotContainsString(__('mfw-google-places.missing_model'), $html);
     }
 }
